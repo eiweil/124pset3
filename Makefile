@@ -6,8 +6,8 @@ ODIR=obj
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-randmst: randmst.o 
-	gcc -o randmst randmst.o -I.
+randmst: randmst.o pcg_basic.o 
+	gcc -o randmst randmst.o pcg_basic.o -I.
 
 .PHONY: clean
 
