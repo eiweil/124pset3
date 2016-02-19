@@ -1,15 +1,5 @@
-
-
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <unistd.h>
-#include <stdint.h>
-
 #include <pcg_basic.h>
-#include <randmst.h>
+#include <binheap.h>
 
 
 // calculates distance between nodes (of any dimension)
@@ -23,6 +13,8 @@ float dist(Node* node1, Node* node2) {
     // for lower dimensions, higher-dimensioned terms are 0
     return sqrt(dim1 + dim2 + dim3 + dim4);
 }
+
+
 
 int main(int argc, char *argv[]) {
 
@@ -46,14 +38,21 @@ int main(int argc, char *argv[]) {
 
     pcg32_random_t rng1;
     pcg32_srandom_r(&rng1, time(NULL), (intptr_t)&rng1);
-    
-    for (int trial; trial < trials; trial++) {
+
+    float res;
+
+    for (int trial = 0; trial < trials; trial++) {
 
         // weights of edges chosen uniformly at random on [0,1]
         if (dim == 0) {
             for (int i = 0; i < n * n; i++) {
-                A[i] = (float) pcg32_random_r(&rng1) / UINT32_MAX;
+                res = (float) pcg32_random_r(&rng1) / UINT32_MAX;
+                A[i] = res;
+                printf("%f   ", res);
+                if ((i+1) % n == 0)
+                    printf("\n");
             }
+
         }
         // weights of edges are Euclidean distances between connected vertices
         else {

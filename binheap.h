@@ -1,7 +1,5 @@
 #include <randmst.h>
 
-typedef Node type;
-
 struct Heap
 {
     unsigned long sz; // number of vertices heap can hold
@@ -9,14 +7,25 @@ struct Heap
     Node* nodes; // Array of the vertices in heap
 };
 
-void heap_init(struct heap *restrict h);
-void heap_push(struct heap *restrict h, type value);
-void heap_pop(struct heap *restrict h);
+// works
+Node heap_find_min(struct Heap *restrict h);
 
-// Returns the top of the heap
-#define heap_front(h) (*(h)->data)
+void free_heap(struct Heap *restrict h);
 
-// Frees the allocated memory
-#define heap_term(h) (free((h)->data))
+// works
+void heap_init(struct Heap *restrict h, Node* a, unsigned long n);
 
-void heapify(type data[restrict], unsigned int count);
+// works
+void heap_insert(struct Heap *restrict h, Node node);
+
+// works
+void heap_deletemin(struct Heap *restrict h);
+
+// works
+void min_heapify(Node* a, unsigned long n);
+
+// works
+int isPowerOfTwo (unsigned int x);
+
+// works
+void printHeap (struct Heap *restrict h);
