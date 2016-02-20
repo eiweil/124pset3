@@ -11,7 +11,7 @@ void free_heap(struct Heap *restrict h) {
 }
 
 // Initialize heap for n vertices
-void heap_init(struct Heap *restrict h, Node* a, unsigned long n)
+void heap_init(struct Heap *restrict h, Node* a, int n)
 {
     start_size = n;
 
@@ -23,6 +23,7 @@ void heap_init(struct Heap *restrict h, Node* a, unsigned long n)
     *h = heap;
     if (!h->nodes) 
         exit(1);
+
 }
 
 // Inserts element to the heap
@@ -65,7 +66,7 @@ void heap_deletemin(struct Heap *restrict h)
     // Find last vertex in heap
     Node temp = h->nodes[--(h->n)];
 
-    printf("temp: %f\n\n", temp.min_edge);
+    //printf("temp: %f\n\n", temp.min_edge);
 
     // Resize the heap if it's consuming too much memory
     if ((h->n <= (h->sz >> 2)) && (h->sz > start_size))
@@ -106,7 +107,7 @@ void heap_deletemin(struct Heap *restrict h)
 }
 
 // Heapifies a non-empty array
-void min_heapify(Node* a, unsigned long n)
+void min_heapify(Node* a, int n)
 {
     unsigned int root, curr, small, big;
     Node temp;

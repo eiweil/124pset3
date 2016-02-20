@@ -2,8 +2,8 @@
 
 struct Heap
 {
-    unsigned long sz; // number of vertices heap can hold
-    unsigned long n; // number of vertices currently in heap
+    int sz; // number of vertices heap can hold
+    int n; // number of vertices currently in heap
     Node* nodes; // Array of the vertices in heap
 };
 
@@ -13,7 +13,7 @@ Node heap_find_min(struct Heap *restrict h);
 void free_heap(struct Heap *restrict h);
 
 // works
-void heap_init(struct Heap *restrict h, Node* a, unsigned long n);
+void heap_init(struct Heap *restrict h, Node* a, int n);
 
 // works
 void heap_insert(struct Heap *restrict h, Node node);
@@ -22,7 +22,7 @@ void heap_insert(struct Heap *restrict h, Node node);
 void heap_deletemin(struct Heap *restrict h);
 
 // works
-void min_heapify(Node* a, unsigned long n);
+void min_heapify(Node* a, int n);
 
 // works
 int isPowerOfTwo (unsigned int x);

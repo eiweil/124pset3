@@ -4,6 +4,8 @@ DEPS = randmst.h binheap.h pcg_basic.h heaptest.h
 ODIR=obj
 TARGETS= randmst heaptest
 
+default: randmst
+
 all: $(TARGETS)
 
 %.o: %.c $(DEPS)

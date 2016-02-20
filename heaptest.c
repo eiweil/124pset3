@@ -41,6 +41,12 @@ int main() {
     printf("\ninsert: \n");
     printHeap(&heap);
 
+    for (int i = 0; i < N; i++) {
+        printf("min: %f\n\n", heap_find_min(&heap).min_edge);
+        heap_deletemin(&heap);
+        printHeap(&heap);
+    }
+
     free_heap(&heap);
 
 }

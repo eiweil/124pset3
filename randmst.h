@@ -6,7 +6,7 @@
 
 
 typedef struct node {
-    unsigned long id;
+    int id;
     float min_edge;
     float x1;
     float x2;
@@ -15,12 +15,14 @@ typedef struct node {
 } Node;
 
 typedef struct edge {
-    unsigned long node1;
-    unsigned long node2;
+    int node1;
+    int node2;
     float dist;
 } Edge;
 
 struct Tree {
     Node* head;
-    long n;
+    int n;
 };
+
+float dist(Node* node1, Node* node2);
