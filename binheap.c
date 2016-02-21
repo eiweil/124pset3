@@ -189,5 +189,5 @@ void print_heap (struct Heap* restrict h) {
         if (is_pwr_two(i+2))
             printf("\n");
     }
-    printf("\n");
+    printf("-----------------------------\n");
 }

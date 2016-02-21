@@ -63,6 +63,11 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
 
+    // top bound for maximum edge weight in MST
+    // nonlinear regression from Mathematica of form (a ^ {b + c log(x)})
+    // +0.025 and *1.25 to try and ensure boundedness
+    float k_n = 0.025 + (1.25) * 4.53261/pow(n,0.754872);
+
     // adjacency matrix
     float A[n*n];
 
@@ -99,31 +104,44 @@ int main(int argc, char *argv[]) {
             for (int j = 0; j < n - 1; j++) {
 
                 // start with first node in partial MST
-                if (j == 0) {
                     for (int k = j + 1; k < n; k++) {
                         weight = (float) pcg32_random_r(&rng1) / UINT32_MAX;
                         index = get_index(j, k, n);
                         A[index] = weight;
                         /*
-                        Edge* e = (Edge*) malloc(sizeof(Edge));
-                        e->node = k;
-                        e->next = NULL;
-                        e->weight = weight;
-                        add_edge(V, e, j);
+                        if (weight < k_n) {
+                            Edge* e = (Edge*) malloc(sizeof(Edge));
+                            e->node = k;
+                            e->next = NULL;
+                            e->weight = weight;
+                            add_edge(V, e, j);
+                        }
                         */
                         //printf("%f   ", weight);
-                        (nodes + k)->min_edge = weight;
-                        (nodes + k)->id = k;
+                        if (j == 0) {
+                            (nodes + k)->min_edge = weight;
+                            (nodes + k)->id = k;
+                        }
+                        
                     }
-                }
-                else {
+                //}
+                /*else {
                     for (int k = j + 1; k < n; k++) {
                         weight = (float) pcg32_random_r(&rng1) / UINT32_MAX;
                         index = get_index(j, k, n);
                         A[index] = weight;
+                        
+                        if (weight < k_n) {
+                            Edge* e = (Edge*) malloc(sizeof(Edge));
+                            e->node = k;
+                            e->next = NULL;
+                            e->weight = weight;
+                            add_edge(V, e, j);
+                        }
+                        
                         //printf("%f   ", weight);
                     }
-                }
+                }*/
 
                 //printf("\n");
             }
@@ -218,10 +236,12 @@ int main(int argc, char *argv[]) {
                     }
                 }
             }
+            if(heap.n > 1)
+                min_heapify(&heap, heap.n);
         }
 
         total += tree_weight;
-        printf("done with trial %d, MST weight: %f\n\n", trial, tree_weight);
+        printf("done with trial %d, MST weight: %f\n\n", trial + 1, tree_weight);
 
         free_heap(&heap);
         free(nodes);
