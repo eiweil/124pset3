@@ -2,22 +2,30 @@
 
 static unsigned int start_size = 1024;
 
-Node heap_find_min(struct Heap *restrict h) {
+Node heap_find_min(struct Heap* restrict h) {
     return h->nodes[0];
 }
 
-void free_heap(struct Heap *restrict h) {
-    free(h->nodes);
+void free_heap(struct Heap* restrict h) {
+    free(h->pos);
+}
+
+int in_heap(struct Heap* restrict h, int id) {
+    if (h->pos[id] < h->n && h->pos[id] != -1)
+        return 1;
+    else
+        return 0;
 }
 
 // Initialize heap for n vertices
-void heap_init(struct Heap *restrict h, Node* a, int n)
+void heap_init(struct Heap* restrict h, Node* a, int n)
 {
     start_size = n;
 
     struct Heap heap = {
         .sz = n,
         .n = n,
+        .pos = (int*) malloc((n+1) * sizeof(Node)),
         .nodes = a
     };
     *h = heap;
@@ -27,7 +35,7 @@ void heap_init(struct Heap *restrict h, Node* a, int n)
 }
 
 // Inserts element to the heap
-void heap_insert(struct Heap *restrict h, Node node)
+void heap_insert(struct Heap* restrict h, Node node)
 {
 
     // Realloc heap if it's full
@@ -35,7 +43,7 @@ void heap_insert(struct Heap *restrict h, Node node)
     {
         // increase size by power of 2
         h->sz <<= 1;
-        h->nodes = realloc(h->nodes, sizeof(Node) * h->sz);
+        h->nodes = (Node*) realloc(h->nodes, sizeof(Node) * h->sz);
         if (!h->nodes)
             exit(1);
     }
@@ -54,17 +62,21 @@ void heap_insert(struct Heap *restrict h, Node node)
 
         // swap nodes
         h->nodes[curr] = h->nodes[parent];
+        h->pos[(h->nodes[parent]).id] = curr;
         curr = parent;
     }
     h->nodes[curr] = node;
+    h->pos[node.id] = curr;
 }
 
 // Removes the top vertex from the heap
-void heap_deletemin(struct Heap *restrict h)
+void heap_deletemin(struct Heap* restrict h)
 {
-
     // Find last vertex in heap
     Node temp = h->nodes[--(h->n)];
+
+    // remove min from heap
+    h->pos[h->nodes[0].id] = -1;
 
     //printf("temp: %f\n\n", temp.min_edge);
 
@@ -95,20 +107,26 @@ void heap_deletemin(struct Heap *restrict h)
             (h->nodes[big]).min_edge <= (h->nodes[small]).min_edge)
             small = big;
 
-        // if smaller child is at least as big as parent, we're done
+        // found place for temp
         if (temp.min_edge <= (h->nodes[small]).min_edge) 
             break;
 
         // swap
+        //h->pos[h->nodes[curr].id] = -1;
+        //printf("%d\n", h->nodes[curr].id);
         h->nodes[curr] = h->nodes[small];
+        h->pos[(h->nodes[small]).id] = curr;
         curr = small;
     }
     h->nodes[curr] = temp;
+    h->pos[temp.id] = curr;
 }
 
 // Heapifies a non-empty array
-void min_heapify(Node* a, int n)
+void min_heapify(struct Heap* restrict h, int n)
 {
+
+    Node* nodes = h->nodes;
     unsigned int root, curr, small, big;
     Node temp;
 
@@ -116,7 +134,7 @@ void min_heapify(Node* a, int n)
     root = n/2 - 1;
     while (1)
     {
-        temp = a[root];
+        temp = nodes[root];
         for(curr = root; 1; curr = small)
         {
             // Find the child to swap with
@@ -129,19 +147,22 @@ void min_heapify(Node* a, int n)
             big = small + 1;
 
             // find smaller child
-            if ((big < n) && (a[big]).min_edge <= (a[small]).min_edge)
+            if ((big < n) && (nodes[big]).min_edge <= (nodes[small]).min_edge)
                 small = big;
 
             // if smaller child is bigger or equal to parent, subheap is done
-            if (temp.min_edge <= (a[small]).min_edge)
+            if (temp.min_edge <= (nodes[small]).min_edge)
                 break; 
 
-            a[curr] = a[small];
+            nodes[curr] = nodes[small];
+            h->pos[nodes[small].id] = curr;
         }
 
-        if (curr != root) 
-            a[curr] = temp;
-
+        if (curr != root) {
+            nodes[curr] = temp;
+            h->pos[temp.id] = curr;
+        }
+            
         // we're done (at actual root of heap)
         if (!root) 
             return;
@@ -150,15 +171,23 @@ void min_heapify(Node* a, int n)
     }
 }
 
-int isPowerOfTwo (unsigned int x)
+void heap_number(struct Heap* restrict h) {
+    for (int i = 0; i < h->n; i++) {
+        h->pos[i+1] = i;
+    }
+}
+
+int is_pwr_two (unsigned int x)
 {
   return ((x != 0) && !(x & (x - 1)));
 }
 
-void printHeap (struct Heap *restrict h) {
+void print_heap (struct Heap* restrict h) {
     for (int i = 0; i < h->n; i++) {
-        printf("%f  \n", (h->nodes + i)->min_edge);
-        if (isPowerOfTwo(i+2))
+        printf("%d / %d / %f\n", 
+                (h->nodes[i]).id, h->pos[(h->nodes+i)->id], (h->nodes + i)->min_edge);
+        if (is_pwr_two(i+2))
             printf("\n");
     }
+    printf("\n");
 }

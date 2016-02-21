@@ -15,9 +15,9 @@ typedef struct node {
 } Node;
 
 typedef struct edge {
-    int node1;
-    int node2;
-    float dist;
+    int node;
+    struct edge* next;
+    float weight;
 } Edge;
 
 struct Tree {

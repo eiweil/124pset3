@@ -1,8 +1,9 @@
 CC=gcc
-CFLAGS=-I.
+CFLAGS=-I. -g
 DEPS = randmst.h binheap.h pcg_basic.h heaptest.h
 ODIR=obj
 TARGETS= randmst heaptest
+CLEAN= randmst.dSYM 
 
 default: randmst
 
@@ -20,4 +21,4 @@ heaptest: heaptest.o pcg_basic.o binheap.o
 .PHONY: clean
 
 clean:
-	rm -f *.o *~ core $(TARGETS)
+	rm -rf *.o *~ core $(TARGETS) $(CLEAN)
