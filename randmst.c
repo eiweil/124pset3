@@ -14,37 +14,13 @@ float dist(Node* node1, Node* node2) {
     return sqrt(dim1 + dim2 + dim3 + dim4);
 }
 
-// find index for the distance between nodes a and b
-// in array corresponding to an upper-triangular matrix
-int get_index(int a, int b, int n) {
-
-    // find min of two ids
-    int min, max;
-    if (a <= b) {
-        min = a;
-        max = b;
-    }
-    else {
-        min = b;
-        max = a;
-    }
-
-    if (min == 0) 
-        return max - 1;
-
-    int row = n * min + -(min * min + min) / 2;
-    int col = max - min - 1;
-    return (row + col);
-}
-
 // add edge to adjacency list
 void add_edge (Edge** V, Edge* e, int id) {
     e->next = V[id];
     V[id] = e;
-    //printf("V[%d]: %p\n", id, e);
-    //printf("next: %p\n\n", e->next);
 }
 
+// to print adjacency list (debugging)
 void print_list(Edge** V, int n) {
     for (int i = 0; i < n; i++) {
         printf("%d", i);
@@ -80,12 +56,36 @@ int main(int argc, char *argv[]) {
     // top bound for maximum edge weight in MST
     // nonlinear regression from Mathematica of form (a ^ {b + c log(x)})
     // +0.025 and *1.25 to try and ensure boundedness
-    float k_n = 0.025 + (1.25) * 4.53261/pow(n, 0.754872);
+    // k_n is of form a+b*c/n^d
+    float a, b, c, d;
+    if (dim == 0) {
+        a = 0.025;
+        b = 1.25;
+        c = 4.532613;
+        d = 0.754872;
+    }
+    if (dim == 2) {
+        a = 0.025;
+        b = 1.25;
+        c = 2.717475;
+        d = 0.494280;
+    }
+    if (dim == 3) {
+        a = 0.025;
+        b = 1.25;
+        c = 2.100193;
+        d = 0.325292;
+    }
+    if (dim == 4) {
+        a = 0.025;
+        b = 1.25;
+        c = 1.710965;
+        d = 0.233472;
+    }
+
+    float k_n = a + b * c / pow(n, d);
 
     printf("k_n = %f\n\n", k_n);
-
-    // adjacency matrix
-    //float A[n*n];
 
     pcg32_random_t rng1;
     pcg32_srandom_r(&rng1, time(NULL), (intptr_t)&rng1);
@@ -122,8 +122,6 @@ int main(int argc, char *argv[]) {
                 // start with first node in partial MST
                     for (int k = j + 1; k < n; k++) {
                         weight = (float) pcg32_random_r(&rng1) / UINT32_MAX;
-                        //index = get_index(j, k, n);
-                        //A[index] = weight;
                         
                         if (weight < k_n) {
                             Edge* e1 = (Edge*) malloc(sizeof(Edge));
@@ -195,6 +193,7 @@ int main(int argc, char *argv[]) {
                     weight = dist(nodes + j, nodes + k);
                     //A[n * j + k] = weight;
                     
+                    //if (j != k) {
                     if (weight < k_n && j != k) {
                         Edge* e = (Edge*) malloc(sizeof(Edge));
                         e->node = k;

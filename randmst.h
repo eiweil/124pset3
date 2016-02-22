@@ -20,9 +20,8 @@ typedef struct edge {
     float weight;
 } Edge;
 
-struct Tree {
-    Node* head;
-    int n;
-};
-
 float dist(Node* node1, Node* node2);
+
+void add_edge (Edge** V, Edge* e, int id);
+
+void print_list(Edge** V, int n);
