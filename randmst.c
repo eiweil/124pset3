@@ -1,5 +1,5 @@
 #include <pcg_basic.h>
-#include <binheap.h>
+#include <daryheap.h>
 
 
 // calculates distance between nodes (of any dimension)
@@ -47,6 +47,7 @@ int main(int argc, char *argv[]) {
     int n = strtol(argv[2], &end, 10);
     int trials = strtol(argv[3], &end, 10);
     int dim = strtol(argv[4], &end, 10);
+    int dary = n/2;
 
     if (dim == 1 || dim < 0 || dim > 4) {
         printf("%s\n", "dimension must be 0 or between 2 and 4, inclusive");
@@ -84,8 +85,6 @@ int main(int argc, char *argv[]) {
     }
 
     float k_n = a + b * c / pow(n, d);
-
-    k_n = 0.138293;
 
     printf("k_n = %f\n\n", k_n);
 
@@ -224,7 +223,7 @@ int main(int argc, char *argv[]) {
 
         // create heap of vertices (excluding first; it's already in MST)
         struct Heap heap;
-        heap_init(&heap, nodes + 1, n - 1);
+        heap_init(&heap, nodes + 1, n - 1, dary);
         //print_heap(&heap);
         heap_number(&heap);
         //print_heap(&heap);

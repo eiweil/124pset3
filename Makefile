@@ -12,8 +12,8 @@ all: $(TARGETS)
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-randmst: randmst.o pcg_basic.o binheap.o
-	$(CC) -o randmst randmst.o pcg_basic.o binheap.o $(CFLAGS)
+randmst: randmst.o pcg_basic.o daryheap.o
+	$(CC) -o randmst randmst.o pcg_basic.o daryheap.o $(CFLAGS)
 
 heaptest: heaptest.o pcg_basic.o binheap.o
 	${CC} -o heaptest heaptest.o pcg_basic.o binheap.o $(CFLAGS)
