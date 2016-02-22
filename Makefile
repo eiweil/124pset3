@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I. -g -lm
+CFLAGS=-I. -g -lm -std=c99
 DEPS = randmst.h binheap.h pcg_basic.h heaptest.h daryheap.h darytest.h
 ODIR=obj
 TARGETS= randmst heaptest darytest
