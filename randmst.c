@@ -85,6 +85,8 @@ int main(int argc, char *argv[]) {
 
     float k_n = a + b * c / pow(n, d);
 
+    k_n = 0.138293;
+
     printf("k_n = %f\n\n", k_n);
 
     pcg32_random_t rng1;
