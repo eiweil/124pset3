@@ -1,10 +1,7 @@
 # 124pset3
-CS124 pset #3
-
-
-## Test
-test
-test James
+CS124 Programming Asst 1
+James Baskerville
+Emma Weil
 
 
 Used PCG random number generator (minimal C implementation): 
