@@ -1,8 +1,8 @@
 CC=gcc
-CFLAGS=-I. -g
-DEPS = randmst.h binheap.h pcg_basic.h heaptest.h
+CFLAGS=-I. -g -lm
+DEPS = randmst.h binheap.h pcg_basic.h heaptest.h daryheap.h darytest.h
 ODIR=obj
-TARGETS= randmst heaptest
+TARGETS= randmst heaptest darytest
 CLEAN= randmst.dSYM 
 
 default: randmst
@@ -17,6 +17,9 @@ randmst: randmst.o pcg_basic.o binheap.o
 
 heaptest: heaptest.o pcg_basic.o binheap.o
 	${CC} -o heaptest heaptest.o pcg_basic.o binheap.o $(CFLAGS)
+
+darytest: darytest.o pcg_basic.o daryheap.o
+	${CC} -o darytest darytest.o pcg_basic.o daryheap.o $(CFLAGS)
 
 .PHONY: clean
 

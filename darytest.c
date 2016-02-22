@@ -1,15 +1,16 @@
-#include <binheap.h>
+#include <daryheap.h>
 #include <pcg_basic.h>
-#include <heaptest.h>
+#include <darytest.h>
 
 #define N 15
+#define D 4
 
 int main() {
 
     Node* nodes = calloc(N, sizeof(Node));
 
     struct Heap heap;
-    heap_init(&heap, nodes, N);
+    heap_init(&heap, nodes, N, D);
 
     pcg32_random_t rng1;
     pcg32_srandom_r(&rng1, time(NULL), (intptr_t)&rng1);

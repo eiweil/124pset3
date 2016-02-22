@@ -228,7 +228,7 @@ int main(int argc, char *argv[]) {
         //print_heap(&heap);
         heap_number(&heap);
         //print_heap(&heap);
-        min_heapify(&heap, heap.n);
+        min_heapify(&heap);
         //print_heap(&heap);
         heap.pos[0] = -1;
 
@@ -258,47 +258,22 @@ int main(int argc, char *argv[]) {
             Edge* prev = V[next_node.id];
             while (curr != NULL) {
                 if (in_heap(&heap, curr->node)) { 
-                    //printf("%d in heap\n", curr->node);
                     if(curr->weight < 
                         heap.nodes[heap.pos[curr->node]].min_edge) {
-                        //printf("changed from %f to %f\n", heap.nodes[heap.pos[curr->node]].min_edge, curr->weight);
                         heap.nodes[heap.pos[curr->node]].min_edge = 
                             curr->weight;
 
                     }
                     prev = curr;
                 }
-                /*else {
-                    prev->next = curr->next;
-                    free(curr);
-                    curr = prev->next;
-                }*/
                 curr = curr->next;
             }
-            /*
-            for (int i = 1; i < n; i++) {
-                if (in_heap(&heap, i)) {
 
-                    int ind;
-                    if (dim == 0)
-                        ind = get_index(next_node.id, i, n);
-                    else
-                        ind = n * next_node.id + i;
-                    //printf("%d-%d weight: %f vs. %f\n", 
-                            //next_node.id, i, A[ind], (heap.nodes[heap.pos[i]]).min_edge);
-                    if (A[ind] < (heap.nodes[heap.pos[i]]).min_edge) {
-                        //printf("changed value: edge %d-%d to %f\n", next_node.id, i, A[ind]);
-                        (heap.nodes[heap.pos[i]]).min_edge = A[ind];
-                        //printf("changed: %f\n\n", (heap.nodes[heap.pos[i]]).min_edge);
-                    }
-                }
-            }*/
             if(heap.n > 1)
-                min_heapify(&heap, heap.n);
+                min_heapify(&heap);
         }
 
         total += tree_weight;
-        //printf("done with trial %d, MST weight: %f\n\n", trial + 1, tree_weight);
 
         free_heap(&heap);
         free(nodes);

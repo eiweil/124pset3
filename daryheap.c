@@ -1,4 +1,4 @@
-#include <binheap.h>
+#include <daryheap.h>
 
 static unsigned int start_size = 1024;
 
@@ -18,11 +18,12 @@ int in_heap(struct Heap* h, int id) {
 }
 
 // Initialize heap for n vertices
-void heap_init(struct Heap* h, Node* a, int n)
+void heap_init(struct Heap* h, Node* a, int n, int d)
 {
     start_size = n;
 
     struct Heap heap = {
+        .d = d,
         .sz = n,
         .n = n,
         .pos = (int*) malloc((n+1) * sizeof(Node)),
@@ -37,6 +38,8 @@ void heap_init(struct Heap* h, Node* a, int n)
 // Inserts element to the heap
 void heap_insert(struct Heap* h, Node node)
 {
+
+    int d = h->d;
 
     // Realloc heap if it's full
     if (h->n == h->sz)
@@ -53,8 +56,8 @@ void heap_insert(struct Heap* h, Node node)
     curr = h->n++;
 
     while (curr > 0) {
-        // parent's index is floor of (curr-1)/2
-        parent = (curr - 1)/2; 
+        // parent's index is floor of (curr-1)/d
+        parent = (curr - 1)/d; 
 
         // found where it fits
         if ((h->nodes[parent]).min_edge <= node.min_edge) 
@@ -72,6 +75,9 @@ void heap_insert(struct Heap* h, Node node)
 // Removes the top vertex from the heap
 void heap_deletemin(struct Heap* h)
 {
+
+    int d = h->d;
+
     // Find last vertex in heap
     Node temp = h->nodes[--(h->n)];
 
@@ -90,30 +96,34 @@ void heap_deletemin(struct Heap* h)
     }
 
     // Fix heap
-    unsigned int curr, small, big;
+    unsigned int curr, first, small;
     curr = 0;
     while (1) {
         // Find the child to swap with
-        small = curr * 2 + 1;
+        first = curr * d + 1;
 
         // If no children, we're done
-        if (small >= h->n) 
+        if (first >= h->n) 
             break; 
 
-        big = small + 1;
-
+        // find smallest child
+        small = first;
+        for (int i = 1; i <= d; i++) {
+            if ((first + i) < h->n && 
+                    (h->nodes[first + i]).min_edge <= (h->nodes[small]).min_edge)
+                small = first + i;
+        }
+/*
         // find smaller child
         if ((big < h->n) && 
             (h->nodes[big]).min_edge <= (h->nodes[small]).min_edge)
             small = big;
-
+*/
         // found place for temp
         if (temp.min_edge <= (h->nodes[small]).min_edge) 
             break;
 
-        // swap
-        //h->pos[h->nodes[curr].id] = -1;
-        //printf("%d\n", h->nodes[curr].id);
+        // move child up
         h->nodes[curr] = h->nodes[small];
         h->pos[(h->nodes[small]).id] = curr;
         curr = small;
@@ -126,31 +136,42 @@ void heap_deletemin(struct Heap* h)
 void min_heapify(struct Heap* h)
 {
 
+    int d = h->d;
+
     Node* nodes = h->nodes;
-    unsigned int root, curr, small, big;
+    unsigned int root, curr, first, small;
     Node temp;
 
-    // only have to heapify up from penultimate layer
-    root = (h->n)/2 - 1;
+    // only have to heapify up from last node that has children
+    root = ((h->n)-2)/d;
+    //printf("root: %d\n", root);
     while (1)
     {
         temp = nodes[root];
+        //printf("temp id: %d\n", temp.id);
         curr = root;
-        while (1) {
-
+        while (1)
+        {
             // Find the child to swap with
-            small = curr * 2 + 1;
+            first = curr * d + 1;
 
             // if no children, subheap is done
-            if (small >= h->n) 
+            if (first >= h->n) 
                 break;
 
-            big = small + 1;
-
+             // find smallest child
+            small = first;
+            for (int i = 1; i < d; i++) {
+                if ((first + i) < h->n && 
+                    (h->nodes[first + i]).min_edge <= (h->nodes[small]).min_edge)
+                    small = first + i;
+            }
+            //printf("small edge: %f\n", (h->nodes[small]).min_edge);
+/*
             // find smaller child
-            if ((big < h->n) && (nodes[big]).min_edge <= (nodes[small]).min_edge)
+            if ((big < n) && (nodes[big]).min_edge <= (nodes[small]).min_edge)
                 small = big;
-
+*/
             // if smaller child is bigger or equal to parent, subheap is done
             if (temp.min_edge <= (nodes[small]).min_edge)
                 break; 
@@ -179,17 +200,32 @@ void heap_number(struct Heap* h) {
     }
 }
 
-int is_pwr_two (unsigned int x)
+int is_pwr_d (unsigned int n, int d)
 {
-  return ((x != 0) && !(x & (x - 1)));
+    if (n == 0)
+        return 0;
+    while (n % d == 0) {
+        n /= d;
+    }
+    return n == 1;
 }
 
 void print_heap (struct Heap* h) {
-    for (int i = 0; i < h->n; i++) {
-        printf("%d / %d / %f\n", 
-                (h->nodes[i]).id, h->pos[(h->nodes+i)->id], (h->nodes + i)->min_edge);
-        if (is_pwr_two(i+2))
-            printf("\n");
+    int d = h->d;
+    int counter = 0;
+    int level = 0;
+    while (counter != h->n) {
+        for (int j = 0; j < pow(d, level); j++) {
+            printf("%d / %d / %f\n", 
+                (h->nodes[counter]).id, 
+                h->pos[h->nodes[counter].id], 
+                h->nodes[counter].min_edge);
+            counter++;
+            if (counter == h->n)
+                break;
+        }
+        level++;
+        printf("\n");
     }
     printf("-----------------------------\n");
 }
